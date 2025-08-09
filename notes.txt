@@ -1,0 +1,1 @@
+- validate if pawn lands on space occupied by own pawn
