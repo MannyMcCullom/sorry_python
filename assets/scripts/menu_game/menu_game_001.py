@@ -398,89 +398,65 @@ class menu_game:
             pawn = self.check_slide_position(players, pawn)
             pawn_option_valid[pawn_index] = self.check_end_position_occupied(pawn, option_index)
 
+    def pawn_checks(self, players, pawn):
+        pawn.check_home_postion()
+        pawn = self.check_slide_position(players, pawn)
+        self.take_over_position(players, pawn)
+
 # Card Option Actions (Top) ------------------------------------------------------------------------------
-    def card_1_option_1_action(self, players, pawn): # Move one of your pawns forward one from START.
+    def card_1_option_1_action(self, pawn): # Move one of your pawns forward one from START.
         pawn.reset()
         pawn.at_start = False
-        self.take_over_position(players, pawn)
 
-    def card_1_option_2_action(self, players, pawn): # If in play, move forward one space."
+    def card_1_option_2_action(self, pawn): # If in play, move forward one space."
         pawn = self.move_forward(pawn)
-        self.take_over_position(players, pawn)
 
-    def card_2_option_1_action(self, players, pawn): # Move one of your pawns forward two from START.
+    def card_2_option_1_action(self, pawn): # Move one of your pawns forward two from START.
         pawn.reset()
         pawn.at_start = False
         pawn = self.move_forward(pawn)
-        self.take_over_position(players, pawn)
 
-    def card_2_option_2_action(self, players, pawn): # If in play, move forward two spaces.
+    def card_2_option_2_action(self, pawn): # If in play, move forward two spaces.
         pawn = self.move_forward(pawn, 2)
-        self.take_over_position(players, pawn)
     
-    def card_3_option_1_action(self, players, pawn): # Move one of your pawns forward three spaces.
+    def card_3_option_1_action(self, pawn): # Move one of your pawns forward three spaces.
         pawn = self.move_forward(pawn, 3)
-        self.take_over_position(players, pawn)
 
-    def card_3_option_2_action(self, players, pawn): # n/a
-        i = 0
-
-    def card_4_option_1_action(self, players, pawn): # Move one of your pawns backward four spaces.
+    def card_4_option_1_action(self, pawn): # Move one of your pawns backward four spaces.
         pawn = self.move_backward(pawn, 4)
-        self.take_over_position(players, pawn)
 
-    def card_4_option_2_action(self, players, pawn): # n/a
-        i = 0
-
-    def card_5_option_1_action(self, players, pawn): # Move one of your pawns forward five spaces.
+    def card_5_option_1_action(self, pawn): # Move one of your pawns forward five spaces.
         pawn = self.move_forward(pawn, 5)
-        self.take_over_position(players, pawn)
 
-    def card_5_option_2_action(self, players, pawn): # n/a
-        i = 0
-
-    def card_7_option_1_action(self, players, pawn): # Move one of your pawns forward seven spaces.
+    def card_7_option_1_action(self, pawn): # Move one of your pawns forward seven spaces.
         pawn = self.move_forward(pawn, 7)
-        self.take_over_position(players, pawn)
 
     def card_7_option_2_action(self, players, pawn): # Split seven forward moves between two of your pawns.
         i = 0
 
-    def card_8_option_1_action(self, players, pawn): # Move one of your pawns forward eight spaces.
+    def card_8_option_1_action(self, pawn): # Move one of your pawns forward eight spaces.
         pawn = self.move_forward(pawn, 8)
-        self.take_over_position(players, pawn)
 
-    def card_8_option_2_action(self, players, pawn): # n/a
-        i = 0
-
-    def card_10_option_1_action(self, players, pawn): # Move one of your pawns forward ten spaces.
+    def card_10_option_1_action(self, pawn): # Move one of your pawns forward ten spaces.
         pawn = self.move_forward(pawn, 10)
-        self.take_over_position(players, pawn)
 
-    def card_10_option_2_action(self, players, pawn): # Move one of your pawns backward one space.
+    def card_10_option_2_action(self, pawn): # Move one of your pawns backward one space.
         pawn = self.move_backward(pawn)
-        self.take_over_position(players, pawn)
 
-    def card_11_option_1_action(self, players, pawn): # Move one of your pawns forward eleven spaces.
+    def card_11_option_1_action(self, pawn): # Move one of your pawns forward eleven spaces.
         pawn = self.move_forward(pawn, 11)
-        self.take_over_position(players, pawn)
 
     def card_11_option_2_action(self, players, pawn): # Switch any one of your pawns with an opponent's.
         i = 0
 
-    def card_12_option_1_action(self, players, pawn): # Move one of your pawns forward twelve spaces.
+    def card_12_option_1_action(self, pawn): # Move one of your pawns forward twelve spaces.
         pawn = self.move_forward(pawn, 12)
-        self.take_over_position(players, pawn)
-
-    def card_12_option_2_action(self, players, pawn): # n/a
-        i = 0
 
     def card_sorry_option_1_action(self, players, pawn): # Move a pawn from your start area to take the place of another player's pawn, which must return to its own start area.
         i = 0
 
-    def card_sorry_option_2_action(self, players, pawn): # Move one of your pawns forward four spaces.
+    def card_sorry_option_2_action(self, pawn): # Move one of your pawns forward four spaces.
         pawn = self.move_forward(pawn, 4)
-        self.take_over_position(players, pawn)
 
 # Card Option Actions (Bottom) ------------------------------------------------------------------------------
 
@@ -503,7 +479,7 @@ class menu_game:
                         current_pawn = current_player.pawns[pawn_index].copy_pawn()
 
                         if current_pawn.at_start == True:
-                            self.card_1_option_1_action(temp_players, current_pawn)
+                            self.card_1_option_1_action(current_pawn)
                             self.pawn_checks(temp_players, current_pawn, pawn_option_valid, option_index, pawn_index)
                         else:
                             pawn_option_valid[pawn_index] = False
@@ -521,7 +497,7 @@ class menu_game:
                         current_pawn = current_player.pawns[pawn_index].copy_pawn()
 
                         if current_pawn.on_open_board() == True:
-                            self.card_1_option_2_action(temp_players, current_pawn)
+                            self.card_1_option_2_action(current_pawn)
                             self.pawn_checks(temp_players, current_pawn, pawn_option_valid, option_index, pawn_index)
                         else:
                             pawn_option_valid[pawn_index] = False
@@ -554,7 +530,7 @@ class menu_game:
                         current_pawn = current_player.pawns[pawn_index].copy_pawn()
 
                         if current_pawn.at_start == True:
-                            self.card_2_option_1_action(temp_players, current_pawn)
+                            self.card_2_option_1_action(current_pawn)
                             self.pawn_checks(temp_players, current_pawn, pawn_option_valid, option_index, pawn_index)
                         else:
                             pawn_option_valid[pawn_index] = False
@@ -572,7 +548,7 @@ class menu_game:
                         current_pawn = current_player.pawns[pawn_index].copy_pawn()
 
                         if current_pawn.on_open_board() == True:
-                            self.card_2_option_2_action(temp_players, current_pawn)
+                            self.card_2_option_2_action(current_pawn)
                             self.pawn_checks(temp_players, current_pawn, pawn_option_valid, option_index, pawn_index)
                         else:
                             pawn_option_valid[pawn_index] = False
@@ -605,7 +581,328 @@ class menu_game:
                         current_pawn = current_player.pawns[pawn_index].copy_pawn()
 
                         if current_pawn.on_open_board() == True:
-                            self.card_3_option_1_action(temp_players, current_pawn)
+                            self.card_3_option_1_action(current_pawn)
+                            self.pawn_checks(temp_players, current_pawn, pawn_option_valid, option_index, pawn_index)
+                        else:
+                            pawn_option_valid[pawn_index] = False
+                            self.add_debug_message(OPTION_SELECTION[option_index] + " is NOT VALID for PLAYER " + str(current_player_turn) + " PAWN " + str(pawn_index) + " because PAWN isn't on open board. ")
+
+                        pawn_index += 1
+                    
+                    self.validate_all_options(pawn_option_valid, card_index, option_index)
+                    
+                self.print_temp_debug_message("Done Checking Choice: " + OPTION_SELECTION[option_index])
+                option_index += 1
+            
+            self.print_temp_debug_message("Done Checking Card: " + CARD_LABEL[card_index])
+
+    def check_options_card_4(self, card_index, current_player_turn, players): # Manny is Here --------------------------------------------------------------------------------------------------------------------------------------
+        if CARD_LABEL[card_index] == "4":
+            self.print_temp_debug_message("Checking Card: " + CARD_LABEL[card_index])
+
+            option_index = 0
+            while option_index < MAX_NUM_OF_CARD_OPTIONS:
+                self.print_temp_debug_message("Checking Choice: " + OPTION_SELECTION[option_index])
+
+                pawn_option_valid = [True, True, True, True]
+
+                if option_index == OPTION_SELECTION.index("OPTION_ONE"):
+                    pawn_index = 0
+                    while pawn_index < MAX_NUM_OF_PAWNS:
+                        temp_players = self.copy_players(players)
+                        current_player = temp_players[current_player_turn]
+                        current_pawn = current_player.pawns[pawn_index].copy_pawn()
+
+                        if current_pawn.on_open_board() == True:
+                            self.card_4_option_1_action(current_pawn)
+                            self.pawn_checks(temp_players, current_pawn, pawn_option_valid, option_index, pawn_index)
+                        else:
+                            pawn_option_valid[pawn_index] = False
+                            self.add_debug_message(OPTION_SELECTION[option_index] + " is NOT VALID for PLAYER " + str(current_player_turn) + " PAWN " + str(pawn_index) + " because PAWN isn't on open board. ")
+
+                        pawn_index += 1
+                    
+                    self.validate_all_options(pawn_option_valid, card_index, option_index)
+                    
+                self.print_temp_debug_message("Done Checking Choice: " + OPTION_SELECTION[option_index])
+                option_index += 1
+            
+            self.print_temp_debug_message("Done Checking Card: " + CARD_LABEL[card_index])
+
+    def check_options_card_5(self, card_index, current_player_turn, players): # Manny is Here --------------------------------------------------------------------------------------------------------------------------------------
+        if CARD_LABEL[card_index] == "5":
+            self.print_temp_debug_message("Checking Card: " + CARD_LABEL[card_index])
+
+            option_index = 0
+            while option_index < MAX_NUM_OF_CARD_OPTIONS:
+                self.print_temp_debug_message("Checking Choice: " + OPTION_SELECTION[option_index])
+
+                pawn_option_valid = [True, True, True, True]
+
+                if option_index == OPTION_SELECTION.index("OPTION_ONE"):
+                    pawn_index = 0
+                    while pawn_index < MAX_NUM_OF_PAWNS:
+                        temp_players = self.copy_players(players)
+                        current_player = temp_players[current_player_turn]
+                        current_pawn = current_player.pawns[pawn_index].copy_pawn()
+
+                        if current_pawn.on_open_board() == True:
+                            self.card_5_option_1_action(current_pawn)
+                            self.pawn_checks(temp_players, current_pawn, pawn_option_valid, option_index, pawn_index)
+                        else:
+                            pawn_option_valid[pawn_index] = False
+                            self.add_debug_message(OPTION_SELECTION[option_index] + " is NOT VALID for PLAYER " + str(current_player_turn) + " PAWN " + str(pawn_index) + " because PAWN isn't on open board. ")
+
+                        pawn_index += 1
+                    
+                    self.validate_all_options(pawn_option_valid, card_index, option_index)
+                    
+                self.print_temp_debug_message("Done Checking Choice: " + OPTION_SELECTION[option_index])
+                option_index += 1
+            
+            self.print_temp_debug_message("Done Checking Card: " + CARD_LABEL[card_index])
+
+    def check_options_card_7(self, card_index, current_player_turn, players): # Manny is Here --------------------------------------------------------------------------------------------------------------------------------------
+        if CARD_LABEL[card_index] == "7":
+            self.print_temp_debug_message("Checking Card: " + CARD_LABEL[card_index])
+
+            option_index = 0
+            while option_index < MAX_NUM_OF_CARD_OPTIONS:
+                self.print_temp_debug_message("Checking Choice: " + OPTION_SELECTION[option_index])
+
+                pawn_option_valid = [True, True, True, True]
+
+                if option_index == OPTION_SELECTION.index("OPTION_ONE"):
+                    pawn_index = 0
+                    while pawn_index < MAX_NUM_OF_PAWNS:
+                        temp_players = self.copy_players(players)
+                        current_player = temp_players[current_player_turn]
+                        current_pawn = current_player.pawns[pawn_index].copy_pawn()
+
+                        if current_pawn.on_open_board() == True:
+                            self.card_7_option_1_action(current_pawn)
+                            self.pawn_checks(temp_players, current_pawn, pawn_option_valid, option_index, pawn_index)
+                        else:
+                            pawn_option_valid[pawn_index] = False
+                            self.add_debug_message(OPTION_SELECTION[option_index] + " is NOT VALID for PLAYER " + str(current_player_turn) + " PAWN " + str(pawn_index) + " because PAWN isn't on open board. ")
+
+                        pawn_index += 1
+                    
+                    self.validate_all_options(pawn_option_valid, card_index, option_index)
+
+                # if option_index == OPTION_SELECTION.index("OPTION_TWO"):
+                # Split moves logic
+                    
+                self.print_temp_debug_message("Done Checking Choice: " + OPTION_SELECTION[option_index])
+                option_index += 1
+            
+            self.print_temp_debug_message("Done Checking Card: " + CARD_LABEL[card_index])
+
+    def check_options_card_8(self, card_index, current_player_turn, players): # Manny is Here --------------------------------------------------------------------------------------------------------------------------------------
+        if CARD_LABEL[card_index] == "8":
+            self.print_temp_debug_message("Checking Card: " + CARD_LABEL[card_index])
+
+            option_index = 0
+            while option_index < MAX_NUM_OF_CARD_OPTIONS:
+                self.print_temp_debug_message("Checking Choice: " + OPTION_SELECTION[option_index])
+
+                pawn_option_valid = [True, True, True, True]
+
+                if option_index == OPTION_SELECTION.index("OPTION_ONE"):
+                    pawn_index = 0
+                    while pawn_index < MAX_NUM_OF_PAWNS:
+                        temp_players = self.copy_players(players)
+                        current_player = temp_players[current_player_turn]
+                        current_pawn = current_player.pawns[pawn_index].copy_pawn()
+
+                        if current_pawn.on_open_board() == True:
+                            self.card_8_option_1_action(current_pawn)
+                            self.pawn_checks(temp_players, current_pawn, pawn_option_valid, option_index, pawn_index)
+                        else:
+                            pawn_option_valid[pawn_index] = False
+                            self.add_debug_message(OPTION_SELECTION[option_index] + " is NOT VALID for PLAYER " + str(current_player_turn) + " PAWN " + str(pawn_index) + " because PAWN isn't on open board. ")
+
+                        pawn_index += 1
+                    
+                    self.validate_all_options(pawn_option_valid, card_index, option_index)
+                    
+                self.print_temp_debug_message("Done Checking Choice: " + OPTION_SELECTION[option_index])
+                option_index += 1
+            
+            self.print_temp_debug_message("Done Checking Card: " + CARD_LABEL[card_index])
+
+    def check_options_card_10(self, card_index, current_player_turn, players): # Manny is Here --------------------------------------------------------------------------------------------------------------------------------------
+        if CARD_LABEL[card_index] == "10":
+            self.print_temp_debug_message("Checking Card: " + CARD_LABEL[card_index])
+
+            option_index = 0
+            while option_index < MAX_NUM_OF_CARD_OPTIONS:
+                self.print_temp_debug_message("Checking Choice: " + OPTION_SELECTION[option_index])
+
+                pawn_option_valid = [True, True, True, True]
+
+                if option_index == OPTION_SELECTION.index("OPTION_ONE"):
+                    pawn_index = 0
+                    while pawn_index < MAX_NUM_OF_PAWNS:
+                        temp_players = self.copy_players(players)
+                        current_player = temp_players[current_player_turn]
+                        current_pawn = current_player.pawns[pawn_index].copy_pawn()
+
+                        if current_pawn.on_open_board() == True:
+                            self.card_10_option_1_action(current_pawn)
+                            self.pawn_checks(temp_players, current_pawn, pawn_option_valid, option_index, pawn_index)
+                        else:
+                            pawn_option_valid[pawn_index] = False
+                            self.add_debug_message(OPTION_SELECTION[option_index] + " is NOT VALID for PLAYER " + str(current_player_turn) + " PAWN " + str(pawn_index) + " because PAWN isn't on open board. ")
+
+                        pawn_index += 1
+                    
+                    self.validate_all_options(pawn_option_valid, card_index, option_index)
+
+                if option_index == OPTION_SELECTION.index("OPTION_TWO"):
+                    pawn_index = 0
+                    while pawn_index < MAX_NUM_OF_PAWNS:
+                        temp_players = self.copy_players(players)
+                        current_player = temp_players[current_player_turn]
+                        current_pawn = current_player.pawns[pawn_index].copy_pawn()
+
+                        if current_pawn.on_open_board() == True:
+                            self.card_10_option_2_action(current_pawn)
+                            self.pawn_checks(temp_players, current_pawn, pawn_option_valid, option_index, pawn_index)
+                        else:
+                            pawn_option_valid[pawn_index] = False
+                            self.add_debug_message(OPTION_SELECTION[option_index] + " is NOT VALID for PLAYER " + str(current_player_turn) + " PAWN " + str(pawn_index) + " because PAWN isn't on open board. ")
+
+                        pawn_index += 1
+                    
+                    self.validate_all_options(pawn_option_valid, card_index, option_index)
+                    
+                self.print_temp_debug_message("Done Checking Choice: " + OPTION_SELECTION[option_index])
+                option_index += 1
+            
+            self.print_temp_debug_message("Done Checking Card: " + CARD_LABEL[card_index])
+
+    def check_options_card_11(self, card_index, current_player_turn, players): # Manny is Here --------------------------------------------------------------------------------------------------------------------------------------
+        if CARD_LABEL[card_index] == "11":
+            self.print_temp_debug_message("Checking Card: " + CARD_LABEL[card_index])
+
+            option_index = 0
+            while option_index < MAX_NUM_OF_CARD_OPTIONS:
+                self.print_temp_debug_message("Checking Choice: " + OPTION_SELECTION[option_index])
+
+                pawn_option_valid = [True, True, True, True]
+
+                if option_index == OPTION_SELECTION.index("OPTION_ONE"):
+                    pawn_index = 0
+                    while pawn_index < MAX_NUM_OF_PAWNS:
+                        temp_players = self.copy_players(players)
+                        current_player = temp_players[current_player_turn]
+                        current_pawn = current_player.pawns[pawn_index].copy_pawn()
+
+                        if current_pawn.on_open_board() == True:
+                            self.card_11_option_1_action(current_pawn)
+                            self.pawn_checks(temp_players, current_pawn, pawn_option_valid, option_index, pawn_index)
+                        else:
+                            pawn_option_valid[pawn_index] = False
+                            self.add_debug_message(OPTION_SELECTION[option_index] + " is NOT VALID for PLAYER " + str(current_player_turn) + " PAWN " + str(pawn_index) + " because PAWN isn't on open board. ")
+
+                        pawn_index += 1
+                    
+                    self.validate_all_options(pawn_option_valid, card_index, option_index)
+
+                if option_index == OPTION_SELECTION.index("OPTION_TWO"):
+                    pawn_index = 99999 # bypass loop
+                    while pawn_index < MAX_NUM_OF_PAWNS:
+                        temp_players = self.copy_players(players)
+                        current_player = temp_players[current_player_turn]
+                        current_pawn = current_player.pawns[pawn_index].copy_pawn()
+
+                        if current_pawn.on_open_board() == True:
+                            self.card_11_option_2_action(current_pawn)
+                            self.pawn_checks(temp_players, current_pawn, pawn_option_valid, option_index, pawn_index)
+                        else:
+                            pawn_option_valid[pawn_index] = False
+                            self.add_debug_message(OPTION_SELECTION[option_index] + " is NOT VALID for PLAYER " + str(current_player_turn) + " PAWN " + str(pawn_index) + " because PAWN isn't on open board. ")
+
+                        pawn_index += 1
+                    
+                    self.validate_all_options(pawn_option_valid, card_index, option_index)
+                    
+                self.print_temp_debug_message("Done Checking Choice: " + OPTION_SELECTION[option_index])
+                option_index += 1
+            
+            self.print_temp_debug_message("Done Checking Card: " + CARD_LABEL[card_index])
+
+    def check_options_card_12(self, card_index, current_player_turn, players): # Manny is Here --------------------------------------------------------------------------------------------------------------------------------------
+        if CARD_LABEL[card_index] == "12":
+            self.print_temp_debug_message("Checking Card: " + CARD_LABEL[card_index])
+
+            option_index = 0
+            while option_index < MAX_NUM_OF_CARD_OPTIONS:
+                self.print_temp_debug_message("Checking Choice: " + OPTION_SELECTION[option_index])
+
+                pawn_option_valid = [True, True, True, True]
+
+                if option_index == OPTION_SELECTION.index("OPTION_ONE"):
+                    pawn_index = 0
+                    while pawn_index < MAX_NUM_OF_PAWNS:
+                        temp_players = self.copy_players(players)
+                        current_player = temp_players[current_player_turn]
+                        current_pawn = current_player.pawns[pawn_index].copy_pawn()
+
+                        if current_pawn.on_open_board() == True:
+                            self.card_12_option_1_action(current_pawn)
+                            self.pawn_checks(temp_players, current_pawn, pawn_option_valid, option_index, pawn_index)
+                        else:
+                            pawn_option_valid[pawn_index] = False
+                            self.add_debug_message(OPTION_SELECTION[option_index] + " is NOT VALID for PLAYER " + str(current_player_turn) + " PAWN " + str(pawn_index) + " because PAWN isn't on open board. ")
+
+                        pawn_index += 1
+                    
+                    self.validate_all_options(pawn_option_valid, card_index, option_index)
+                    
+                self.print_temp_debug_message("Done Checking Choice: " + OPTION_SELECTION[option_index])
+                option_index += 1
+            
+            self.print_temp_debug_message("Done Checking Card: " + CARD_LABEL[card_index])
+
+    def check_options_card_sorry(self, card_index, current_player_turn, players): # Manny is Here --------------------------------------------------------------------------------------------------------------------------------------
+        if CARD_LABEL[card_index] == "SORRY":
+            self.print_temp_debug_message("Checking Card: " + CARD_LABEL[card_index])
+
+            option_index = 0
+            while option_index < MAX_NUM_OF_CARD_OPTIONS:
+                self.print_temp_debug_message("Checking Choice: " + OPTION_SELECTION[option_index])
+
+                pawn_option_valid = [True, True, True, True]
+
+                if option_index == OPTION_SELECTION.index("OPTION_ONE"):
+                    pawn_index = 999999 # Bypass loop
+                    while pawn_index < MAX_NUM_OF_PAWNS:
+                        temp_players = self.copy_players(players)
+                        current_player = temp_players[current_player_turn]
+                        current_pawn = current_player.pawns[pawn_index].copy_pawn()
+
+                        if current_pawn.on_open_board() == True:
+                            self.card_sorry_option_1_action(current_pawn)
+                            self.pawn_checks(temp_players, current_pawn, pawn_option_valid, option_index, pawn_index)
+                        else:
+                            pawn_option_valid[pawn_index] = False
+                            self.add_debug_message(OPTION_SELECTION[option_index] + " is NOT VALID for PLAYER " + str(current_player_turn) + " PAWN " + str(pawn_index) + " because PAWN isn't on open board. ")
+
+                        pawn_index += 1
+                    
+                    self.validate_all_options(pawn_option_valid, card_index, option_index)
+
+                if option_index == OPTION_SELECTION.index("OPTION_TWO"):
+                    pawn_index = 0
+                    while pawn_index < MAX_NUM_OF_PAWNS:
+                        temp_players = self.copy_players(players)
+                        current_player = temp_players[current_player_turn]
+                        current_pawn = current_player.pawns[pawn_index].copy_pawn()
+
+                        if current_pawn.on_open_board() == True:
+                            self.card_sorry_option_2_action(current_pawn)
                             self.pawn_checks(temp_players, current_pawn, pawn_option_valid, option_index, pawn_index)
                         else:
                             pawn_option_valid[pawn_index] = False
@@ -661,14 +958,14 @@ class menu_game:
             self.check_options_card_1(card_index, current_player_turn, players)
             self.check_options_card_2(card_index, current_player_turn, players)
             self.check_options_card_3(card_index, current_player_turn, players)
-            # self.check_options_card_4(card_index, current_player_turn, players)
-            # self.check_options_card_5(card_index, current_player_turn, players)
-            # self.check_options_card_7(card_index, current_player_turn, players)
-            # self.check_options_card_8(card_index, current_player_turn, players)
-            # self.check_options_card_10(card_index, current_player_turn, players)
-            # self.check_options_card_11(card_index, current_player_turn, players)
-            # self.check_options_card_12(card_index, current_player_turn, players)
-            # self.check_options_card_SORRY(card_index, current_player_turn, players)
+            self.check_options_card_4(card_index, current_player_turn, players)
+            self.check_options_card_5(card_index, current_player_turn, players)
+            self.check_options_card_7(card_index, current_player_turn, players)
+            self.check_options_card_8(card_index, current_player_turn, players)
+            self.check_options_card_10(card_index, current_player_turn, players)
+            self.check_options_card_11(card_index, current_player_turn, players)
+            self.check_options_card_12(card_index, current_player_turn, players)
+            self.check_options_card_sorry(card_index, current_player_turn, players)
 
             # Makes forfeiting turn a valid option if allowed
             if self.all_options[card_index][OPTION_SELECTION.index("OPTION_ONE")] == False:
@@ -788,30 +1085,100 @@ class menu_game:
         
         self.in_player_action = True
         while self.in_player_action == True:
+            if selected_option not in [OPTION_SELECTION.index("OPTION_ONE"), OPTION_SELECTION.index("OPTION_TWO"), OPTION_SELECTION.index("FORFEIT")]:
+                break
+
+            if selected_option == OPTION_SELECTION.index("FORFEIT"):
+                break
+
             if current_card == "1":
                 if selected_option == OPTION_SELECTION.index("OPTION_ONE"):
-                    self.card_1_option_1_action(players, current_pawn)
+                    self.card_1_option_1_action(current_pawn)
 
-                if selected_option == OPTION_SELECTION.index("OPTION_TWO"):
-                    self.card_1_option_2_action(players, current_pawn)
-                    
+                elif selected_option == OPTION_SELECTION.index("OPTION_TWO"):
+                    self.card_1_option_2_action(current_pawn)
+
                 self.in_player_action = False
 
-            if current_card == "2":
+            elif current_card == "2":
                 if selected_option == OPTION_SELECTION.index("OPTION_ONE"):
-                    self.card_2_option_1_action(players, current_pawn)
+                    self.card_2_option_1_action(current_pawn)
 
-                if selected_option == OPTION_SELECTION.index("OPTION_TWO"):
-                    self.card_2_option_2_action(players, current_pawn)
-                    
+                elif selected_option == OPTION_SELECTION.index("OPTION_TWO"):
+                    self.card_2_option_2_action(current_pawn)
+                
                 self.in_player_action = False
 
-            if current_card == "3":
+            elif current_card == "3":
                 if selected_option == OPTION_SELECTION.index("OPTION_ONE"):
-                    self.card_3_option_1_action(players, current_pawn)
-                    
+                    self.card_3_option_1_action(current_pawn)
+                
+                self.in_player_action = False
+
+            elif current_card == "4":
+                if selected_option == OPTION_SELECTION.index("OPTION_ONE"):
+                    self.card_4_option_1_action(current_pawn)
+                
+                self.in_player_action = False
+
+            elif current_card == "5":
+                if selected_option == OPTION_SELECTION.index("OPTION_ONE"):
+                    self.card_5_option_1_action(current_pawn)
+                
+                self.take_over_position(players, current_pawn)
+                self.in_player_action = False
+
+            elif current_card == "7":
+                if selected_option == OPTION_SELECTION.index("OPTION_ONE"):
+                    self.card_7_option_1_action(current_pawn)
+
+                #elif selected_option == OPTION_SELECTION.index("OPTION_TWO"):
+                    #self.card_7_option_2_action(current_pawn)
+                
+                self.in_player_action = False
+
+            elif current_card == "8":
+                if selected_option == OPTION_SELECTION.index("OPTION_ONE"):
+                    self.card_8_option_1_action(current_pawn)
+                
+                self.in_player_action = False
+
+            elif current_card == "10":
+                if selected_option == OPTION_SELECTION.index("OPTION_ONE"):
+                    self.card_10_option_1_action(current_pawn)
+
+                elif selected_option == OPTION_SELECTION.index("OPTION_TWO"):
+                    self.card_10_option_2_action(current_pawn)
+                
+                self.in_player_action = False
+
+            elif current_card == "11":
+                if selected_option == OPTION_SELECTION.index("OPTION_ONE"):
+                    self.card_11_option_1_action(current_pawn)
+
+                #elif selected_option == OPTION_SELECTION.index("OPTION_TWO"):
+                    #self.card_11_option_2_action(current_pawn)
+                
+
+                self.in_player_action = False
+
+            elif current_card == "12":
+                if selected_option == OPTION_SELECTION.index("OPTION_ONE"):
+                    self.card_12_option_1_action(current_pawn)
+                
+                self.in_player_action = False
+
+            elif current_card == "SORRY":
+                #if selected_option == OPTION_SELECTION.index("OPTION_ONE"):
+                    #self.card_sorry_option_1_action(current_pawn)
+
+                if selected_option == OPTION_SELECTION.index("OPTION_TWO"):
+                    self.card_sorry_option_2_action(current_pawn)
+                
                 self.in_player_action = False
             
+            self.take_over_position(players, current_pawn)
+
             DONT_DO_BLOCK = True
             if DONT_DO_BLOCK == False:
             # Option One
