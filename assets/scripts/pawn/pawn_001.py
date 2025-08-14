@@ -128,6 +128,10 @@ class pawn:
 
         return new_pawn
     
+    def swap_board_position(self, active_pawn):
+        active_pawn.board_position = self.board_position
+        return active_pawn
+    
     def check_home_postion(self):
         if self.safety_zone_position == MAX_SAFETY_ZONE_POSITION:
             self.at_home = True

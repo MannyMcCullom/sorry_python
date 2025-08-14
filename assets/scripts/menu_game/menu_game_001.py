@@ -212,6 +212,8 @@ class menu_game:
                     selected_pawn = -1
                     selected_moves = -1
                     selected_pawn_two = -1
+                    other_player_pawn = -1
+                    other_player_index = -1
                     valid = False
                     drawn_card = self.deck.deck[self.card_num].label
                     
@@ -230,16 +232,19 @@ class menu_game:
                                 selected_pawn = self.select_pawn()
                                 valid = self.validate_selected_pawn(selected_pawn, selected_option)
 
-                                if drawn_card == "7" and selected_option == OPTION_SELECTION.index("OPTION_TWO"): # Manny is Really Here 8/14/2025 *Current Project
+                                if drawn_card == "7" and selected_option == OPTION_SELECTION.index("OPTION_TWO"):
                                     selected_moves = self.select_moves()
                                     selected_pawn_two = self.select_pawn()
                                     valid = self.validate_selected_moves(selected_pawn, selected_moves, selected_pawn_two)
-
+                                
+                                elif drawn_card == "11" and selected_option == OPTION_SELECTION.index("OPTION_TWO"): # Manny is Really Here 8/14/2025 *Current Project
+                                    other_player_index, selected_pawn_two = self.select_other_player_pawn() # Create Method
+                                    valid = self.validate_selected_other_player_pawn(selected_pawn, selected_pawn_two, other_player_index) # Create Method
                         if valid == True:
                             self.in_validating_option = False
 
                     if valid == True:
-                        self.player_action(selected_option, selected_pawn, selected_moves, selected_pawn_two)
+                        self.player_action(selected_option, selected_pawn, selected_moves, selected_pawn_two, other_player_index)
                     
                         self.card_num += 1 # Change top card
                         self.current_player_turn += 1 # Change current player
@@ -361,6 +366,54 @@ class menu_game:
             pygame.display.flip()
 
         return selected_pawn
+    
+    def select_other_player_pawn(self):
+        print("Selecting pawn")
+        selected_pawn = -1
+        selected_player = -1
+        
+        self.in_select_pawn = True
+        while self.in_select_pawn:
+            self.mouse_pos = pygame.mouse.get_pos()
+
+            self.black_screen()
+            self.button_close_corner()
+            self.draw_board()
+            self.button_menu_start()
+
+            # Buttons
+            x_pos_button = RECT_LEFT_PLAY_BUTTON_START
+            y_pos_button = RECT_TOP_PLAY_BUTTON_START
+            self.menu_play_panel()
+
+            player_index = 0
+            while player_index < MAX_NUM_OF_PLAYERS:
+                if player_index != self.current_player_turn:
+                    x_pos_button = RECT_LEFT_PLAY_BUTTON_START
+
+                    pawn_index = 0
+                    while pawn_index < MAX_NUM_OF_PAWNS:
+                        button_pawn = menu_button.menu_button(str(player_index) + str(pawn_index), x_pos_button, y_pos_button).draw(self.screen, self.mouse_pos)
+                        while button_pawn:
+                            if not self.mouse_pressed:
+                                self.mouse_pressed = True
+                                self.in_select_pawn = False
+                                selected_pawn = pawn_index
+                                selected_player = player_index
+                                print("Selected Player " + str(player_index) + " Pawn " + str(pawn_index))
+                                time.sleep(CLICK_TIMER)
+                            break
+                        
+                        x_pos_button += 50
+                        pawn_index += 1
+                    
+                    y_pos_button += 50
+
+                player_index += 1
+
+            pygame.display.flip()
+
+        return selected_player, selected_pawn
     
     def select_moves(self):
         print("Selecting Moves")
@@ -497,8 +550,10 @@ class menu_game:
     def card_11_option_1_action(self, pawn): # Move one of your pawns forward eleven spaces.
         pawn = self.move_forward(pawn, 11)
 
-    def card_11_option_2_action(self, players, pawn): # Switch any one of your pawns with an opponent's.
-        i = 0
+    def card_11_option_2_action(self, pawn, other_player_pawn): # Switch any one of your pawns with an opponent's.
+        temp_board_position = pawn.board_position
+        pawn.board_position = other_player_pawn.board_position
+        other_player_pawn.board_position = temp_board_position
 
     def card_12_option_1_action(self, pawn): # Move one of your pawns forward twelve spaces.
         pawn = self.move_forward(pawn, 12)
@@ -931,15 +986,51 @@ class menu_game:
                     self.validate_all_options(pawn_option_valid, card_index, option_index)
 
                 if option_index == OPTION_SELECTION.index("OPTION_TWO"):
-                    pawn_index = 99999 # bypass loop
+                    print("DEBUG: HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+
+                    temp_players = self.copy_players(players)
+                    self.all_swap_pawn_options = []
+                    
+                    player_index = 0
+                    while player_index < MAX_NUM_OF_PLAYERS:
+                        player_options = []
+
+                        pawn_index = 0
+                        while pawn_index < MAX_NUM_OF_PAWNS:
+                            if temp_players[player_index].pawns[pawn_index].board_position_swappable() == True:
+                                player_options.append(True)
+                            else:
+                                player_options.append(False)
+
+                            pawn_index += 1
+
+                        self.all_swap_pawn_options.append(player_options)
+
+                        player_index += 1
+
+                    pawn_index = 0
                     while pawn_index < MAX_NUM_OF_PAWNS:
                         temp_players = self.copy_players(players)
                         current_player = temp_players[current_player_turn]
                         current_pawn = current_player.pawns[pawn_index].copy_pawn()
+                        #pawn_option_valid[pawn_index] = False
 
-                        if current_pawn.on_open_board() == True:
-                            self.card_11_option_2_action(current_pawn)
-                            self.pawn_checks(temp_players, current_pawn, pawn_option_valid[pawn_index], option_index)
+                        if current_pawn.board_position_swappable() == True:
+                            player_index = 0
+                            while player_index < MAX_NUM_OF_PLAYERS:
+                                if player_index != self.current_player_turn:
+                                    other_player_pawn_index = 0
+                                    while other_player_pawn_index < MAX_NUM_OF_PAWNS:
+                                        if temp_players[player_index].pawns[other_player_pawn_index].board_position_swappable() == True:
+                                            pawn_option_valid[pawn_index] = True
+                                            break
+                                        
+                                        other_player_pawn_index += 1
+
+                                if pawn_option_valid[pawn_index] == True:
+                                    break
+
+                                player_index += 1
                         else:
                             pawn_option_valid[pawn_index] = False
                             self.add_debug_message(OPTION_SELECTION[option_index] + " is NOT VALID for PLAYER " + str(current_player_turn) + " PAWN " + str(pawn_index) + " because PAWN isn't on open board. ")
@@ -947,6 +1038,9 @@ class menu_game:
                         pawn_index += 1
                     
                     self.validate_all_options(pawn_option_valid, card_index, option_index)
+
+                    if self.all_options[card_index][OPTION_SELECTION.index("OPTION_ONE")] == False:
+                        self.all_options[card_index][OPTION_SELECTION.index("FORFEIT")] = True
                     
                 self.print_temp_debug_message("Done Checking Choice: " + OPTION_SELECTION[option_index])
                 option_index += 1
@@ -1048,7 +1142,6 @@ class menu_game:
                     pawn_index_two = 0
                     while pawn_index_two < MAX_NUM_OF_PAWNS:
                         if self.card_7_option_two_choices[pawn_index_one][moves_index][pawn_index_two] == True:
-                            print("DEBUG: HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
                             self.all_options_pawns[card_index][option_index][pawn_index_one] = True
                             self.all_options[card_index][option_index] = True
 
@@ -1190,6 +1283,16 @@ class menu_game:
         self.print_temp_debug_message("DEBUG: Exiting vaildate_selected_moves()\n")
         return valid
     
+    def validate_selected_other_player_pawn(self, selected_pawn, selected_pawn_two, other_player_index):
+        self.print_temp_debug_message("DEBUG: Entering validate_selected_other_player_pawn()\n")
+
+        valid = self.players[self.current_player_turn].pawns[selected_pawn].board_position_swappable()
+        if valid == True:
+            valid = self.players[other_player_index].pawns[selected_pawn_two].board_position_swappable()
+        
+        self.print_temp_debug_message("DEBUG: Exiting validate_selected_other_player_pawn()\n")
+        return valid
+    
     def slide_foward(self, players, pawn, moves = 1):
         while moves > 0:
             pawn.board_position += 1
@@ -1234,7 +1337,7 @@ class menu_game:
 
         return pawn
 
-    def player_action(self, selected_option, selected_pawn, selected_moves, selected_pawn_two):
+    def player_action(self, selected_option, selected_pawn, selected_moves = -1, selected_pawn_two = -1, other_player_index = -1):
         self.clear_debug_message()
         self.print_temp_debug_message("DEBUG: Entering player_action()\n")
 
@@ -1243,8 +1346,13 @@ class menu_game:
         current_player_turn = self.current_player_turn
         current_player = players[current_player_turn]
         current_pawn = current_player.pawns[selected_pawn]
-        current_pawn_two = current_player.pawns[selected_pawn_two]
-        
+
+        if selected_pawn_two > -1:
+            current_pawn_two = current_player.pawns[selected_pawn_two]
+
+        if other_player_index > -1:
+            other_player_pawn = players[other_player_index].pawns[selected_pawn_two]
+
         self.in_player_action = True
         while self.in_player_action == True:
             if selected_option not in [OPTION_SELECTION.index("OPTION_ONE"), OPTION_SELECTION.index("OPTION_TWO"), OPTION_SELECTION.index("FORFEIT")]:
@@ -1287,7 +1395,6 @@ class menu_game:
                 if selected_option == OPTION_SELECTION.index("OPTION_ONE"):
                     self.card_5_option_1_action(current_pawn)
                 
-                self.take_over_position(players, current_pawn)
                 self.in_player_action = False
 
             elif current_card == "7":
@@ -1296,8 +1403,7 @@ class menu_game:
 
                 elif selected_option == OPTION_SELECTION.index("OPTION_TWO"):
                     self.card_7_option_2_action(current_pawn, current_pawn_two, selected_moves)
-                    self.take_over_position(players, current_pawn)
-                    self.take_over_position(players, current_pawn_two)
+                    self.pawn_checks(players, current_pawn_two)
                 
                 self.in_player_action = False
 
@@ -1320,10 +1426,10 @@ class menu_game:
                 if selected_option == OPTION_SELECTION.index("OPTION_ONE"):
                     self.card_11_option_1_action(current_pawn)
 
-                #elif selected_option == OPTION_SELECTION.index("OPTION_TWO"):
-                    #self.card_11_option_2_action(current_pawn)
+                elif selected_option == OPTION_SELECTION.index("OPTION_TWO"):
+                    self.card_11_option_2_action(current_pawn, other_player_pawn)
+                    self.pawn_checks(players, other_player_pawn)
                 
-
                 self.in_player_action = False
 
             elif current_card == "12":
@@ -1341,7 +1447,7 @@ class menu_game:
                 
                 self.in_player_action = False
             
-            self.take_over_position(players, current_pawn)
+            self.pawn_checks(players, current_pawn)
 
             DO_NOT_RUN_BLOCK = True
             if DO_NOT_RUN_BLOCK == False:
