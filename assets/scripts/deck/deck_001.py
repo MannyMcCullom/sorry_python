@@ -191,3 +191,42 @@ class deck:
         self.deck = new_deck
         print("STATUS: deck shuffled")
         self.print_deck()
+
+    def shuffle_deck_card_sorry(self):
+        print("STATUS: deck shuffling for card SORRY")
+        card_track = []
+        new_deck = []
+
+        index = 0
+        while index < NUM_OF_CARDS:
+            new_deck.append("")
+            card_track.append(0)
+            index += 1
+
+        index = 0
+        while index < NUM_OF_CARDS:
+            switched = False
+            while switched == False:
+                random_card = random.randint(0, NUM_OF_CARDS - 1)
+
+                if card_track[random_card] == 0:
+                    if index < 5:
+                        if self.deck[random_card].label == "1":
+                            new_deck[index] = self.deck[random_card]
+                            card_track[random_card] = 1
+                            switched = True
+                    elif index >= 5 and index < 9:
+                        if self.deck[random_card].label == "SORRY":
+                            new_deck[index] = self.deck[random_card]
+                            card_track[random_card] = 1
+                            switched = True
+                    else:    
+                        new_deck[index] = self.deck[random_card]
+                        card_track[random_card] = 1
+                        switched = True
+                        
+            index += 1
+                    
+        self.deck = new_deck
+        print("STATUS: deck shuffled")
+        self.print_deck()

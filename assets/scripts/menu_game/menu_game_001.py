@@ -180,8 +180,9 @@ class menu_game:
         self.card_num = 0
 
         self.deck = deck.deck()
-        self.deck.set_deck() # Makes Deck Unshuffled
-        #self.deck.shuffle_deck_card_11() # DEBUG For test 11 Card
+        # self.deck.set_deck() # Makes Deck Unshuffled
+        # self.deck.shuffle_deck_card_11() # DEBUG For test 11 Card
+        self.deck.shuffle_deck_card_sorry() # DEBUG For test SORRY Card
 
         self.deck.print_deck()
         
@@ -218,11 +219,11 @@ class menu_game:
                     drawn_card = self.deck.deck[self.card_num].label
                     
                     print("\n" + "Drawn Card: " + drawn_card + "\n")
-                    self.player_status_all()
 
                     self.in_validating_option = True
                     while self.in_validating_option == True:
                         self.check_all_options()
+                        self.player_status_all()
 
                         selected_option = self.select_option()
                         valid = self.validate_selected_option(selected_option)
@@ -237,9 +238,13 @@ class menu_game:
                                     selected_pawn_two = self.select_pawn()
                                     valid = self.validate_selected_moves(selected_pawn, selected_moves, selected_pawn_two)
                                 
-                                elif drawn_card == "11" and selected_option == OPTION_SELECTION.index("OPTION_TWO"): # Manny is Really Here 8/14/2025 *Current Project
-                                    other_player_index, selected_pawn_two = self.select_other_player_pawn() # Create Method
-                                    valid = self.validate_selected_other_player_pawn(selected_pawn, selected_pawn_two, other_player_index) # Create Method
+                                elif drawn_card == "11" and selected_option == OPTION_SELECTION.index("OPTION_TWO"):
+                                    other_player_index, selected_pawn_two = self.select_other_player_pawn()
+                                    valid = self.validate_selected_other_player_pawn(selected_pawn, selected_pawn_two, other_player_index)
+
+                                elif drawn_card == "SORRY" and selected_option == OPTION_SELECTION.index("OPTION_ONE"):
+                                    other_player_index, selected_pawn_two = self.select_other_player_pawn()
+                                    valid = self.validate_selected_other_player_pawn(selected_pawn, selected_pawn_two, other_player_index)
                         if valid == True:
                             self.in_validating_option = False
 
@@ -393,7 +398,7 @@ class menu_game:
 
                     pawn_index = 0
                     while pawn_index < MAX_NUM_OF_PAWNS:
-                        button_pawn = menu_button.menu_button(str(player_index) + str(pawn_index), x_pos_button, y_pos_button).draw(self.screen, self.mouse_pos)
+                        button_pawn = menu_button.menu_button(str(player_index) + str(pawn_index), x_pos_button, y_pos_button, 50).draw(self.screen, self.mouse_pos)
                         while button_pawn:
                             if not self.mouse_pressed:
                                 self.mouse_pressed = True
@@ -558,8 +563,9 @@ class menu_game:
     def card_12_option_1_action(self, pawn): # Move one of your pawns forward twelve spaces.
         pawn = self.move_forward(pawn, 12)
 
-    def card_sorry_option_1_action(self, players, pawn): # Move a pawn from your start area to take the place of another player's pawn, which must return to its own start area.
-        i = 0
+    def card_sorry_option_1_action(self, pawn, other_player_pawn): # Move a pawn from your start area to take the place of another player's pawn, which must return to its own start area.
+        pawn.board_position = other_player_pawn.board_position
+        other_player_pawn.reset()
 
     def card_sorry_option_2_action(self, pawn): # Move one of your pawns forward four spaces.
         pawn = self.move_forward(pawn, 4)
@@ -986,8 +992,6 @@ class menu_game:
                     self.validate_all_options(pawn_option_valid, card_index, option_index)
 
                 if option_index == OPTION_SELECTION.index("OPTION_TWO"):
-                    print("DEBUG: HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-
                     temp_players = self.copy_players(players)
                     self.all_swap_pawn_options = []
                     
@@ -1089,20 +1093,29 @@ class menu_game:
                 self.print_temp_debug_message("Checking Choice: " + OPTION_SELECTION[option_index])
 
                 pawn_option_valid = [True, True, True, True]
+                temp_players = self.copy_players(players)
+                current_player = temp_players[current_player_turn]
 
                 if option_index == OPTION_SELECTION.index("OPTION_ONE"):
-                    pawn_index = 999999 # Bypass loop
+                    pawn_index = 0
                     while pawn_index < MAX_NUM_OF_PAWNS:
-                        temp_players = self.copy_players(players)
-                        current_player = temp_players[current_player_turn]
                         current_pawn = current_player.pawns[pawn_index].copy_pawn()
 
-                        if current_pawn.on_open_board() == True:
-                            self.card_sorry_option_1_action(current_pawn)
-                            self.pawn_checks(temp_players, current_pawn, pawn_option_valid[pawn_index], option_index)
+                        if current_pawn.at_start == True:
+                            player_index = 0
+                            while player_index < MAX_NUM_OF_PLAYERS:
+                                if player_index != self.current_player_turn:
+                                    other_player_pawn_index = 0
+                                    while other_player_pawn_index < MAX_NUM_OF_PAWNS:
+                                        if temp_players[player_index].pawns[other_player_pawn_index].on_open_board() == True:
+                                            pawn_option_valid[pawn_index] = True
+
+                                        other_player_pawn_index += 1
+
+                                player_index += 1
                         else:
                             pawn_option_valid[pawn_index] = False
-                            self.add_debug_message(OPTION_SELECTION[option_index] + " is NOT VALID for PLAYER " + str(current_player_turn) + " PAWN " + str(pawn_index) + " because PAWN isn't on open board. ")
+                            self.add_debug_message(OPTION_SELECTION[option_index] + " is NOT VALID for PLAYER " + str(current_player_turn) + " PAWN " + str(pawn_index) + " because PAWN NOT at START. ")
 
                         pawn_index += 1
                     
@@ -1286,9 +1299,17 @@ class menu_game:
     def validate_selected_other_player_pawn(self, selected_pawn, selected_pawn_two, other_player_index):
         self.print_temp_debug_message("DEBUG: Entering validate_selected_other_player_pawn()\n")
 
-        valid = self.players[self.current_player_turn].pawns[selected_pawn].board_position_swappable()
-        if valid == True:
-            valid = self.players[other_player_index].pawns[selected_pawn_two].board_position_swappable()
+        valid = False
+
+        if self.deck.deck[self.card_num].label == "7":
+            valid = self.players[self.current_player_turn].pawns[selected_pawn].board_position_swappable()
+            if valid == True:
+                valid = self.players[other_player_index].pawns[selected_pawn_two].board_position_swappable()
+        
+        if self.deck.deck[self.card_num].label == "SORRY":
+            valid = self.players[self.current_player_turn].pawns[selected_pawn].at_start
+            if valid == True:
+                valid = self.players[other_player_index].pawns[selected_pawn_two].on_open_board()
         
         self.print_temp_debug_message("DEBUG: Exiting validate_selected_other_player_pawn()\n")
         return valid
@@ -1439,10 +1460,10 @@ class menu_game:
                 self.in_player_action = False
 
             elif current_card == "SORRY":
-                #if selected_option == OPTION_SELECTION.index("OPTION_ONE"):
-                    #self.card_sorry_option_1_action(current_pawn)
+                if selected_option == OPTION_SELECTION.index("OPTION_ONE"):
+                    self.card_sorry_option_1_action(current_pawn, other_player_pawn)
 
-                if selected_option == OPTION_SELECTION.index("OPTION_TWO"):
+                elif selected_option == OPTION_SELECTION.index("OPTION_TWO"):
                     self.card_sorry_option_2_action(current_pawn)
                 
                 self.in_player_action = False
