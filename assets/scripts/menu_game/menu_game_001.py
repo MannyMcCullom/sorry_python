@@ -34,7 +34,7 @@ CLICK_TIMER = 0.2
 RECT_LEFT_QUIT = 700
 RECT_TOP_QUIT = 50
 RECT_LEFT_PLAY_BUTTON_START = 50
-RECT_TOP_PLAY_BUTTON_START = 800
+RECT_TOP_PLAY_BUTTON_START = 700
 PLAYER_COLORS = ["GREEN", "RED", "BLUE", "YELLOW"]
 OPTION_SELECTION = ["OPTION_ONE", "OPTION_TWO", "FORFEIT"]
 PAWNS = ["PAWN_ZERO", "PAWN_ONE", "PAWN_TWO", "PAWN_THREE"]
@@ -87,18 +87,18 @@ class menu_game:
         self.menu_start()
     
     def initialize_players(self):
-            self.current_player_turn = 0
-            self.num_of_players = 4
-            self.players = []
+        self.current_player_turn = 0
+        self.num_of_players = 4
+        self.players = []
 
-            player_index = 0
-            while player_index < self.num_of_players:
-                new_player = player.player(PLAYER_COLORS[player_index], START_POSITION[player_index], HOME_POSITION[player_index])
-                self.players.append(new_player)
-                player_index += 1
+        player_index = 0
+        while player_index < self.num_of_players:
+            new_player = player.player(PLAYER_COLORS[player_index], START_POSITION[player_index], HOME_POSITION[player_index])
+            self.players.append(new_player)
+            player_index += 1
 
     def set_screen(self, width = 900, height = 900):
-            self.screen = pygame.display.set_mode((width, height))
+        self.screen = pygame.display.set_mode((width, height))
 
     def draw_board(self): # Draw board, and pawns
         pygame.draw.rect(self.screen, colors.colors().board_color, self.board_rect)
@@ -114,7 +114,7 @@ class menu_game:
             if event.type == pygame.QUIT:
                 pygame.quit()
 
-            elif event.type == pygame.MOUSEBUTTONUP: 
+            elif event.type == pygame.MOUSEBUTTONUP:
                 self.mouse_pressed = False
 
     def button_menu_start(self):
@@ -1171,7 +1171,7 @@ class menu_game:
                     self.all_options[card_index][option_index] = True
                 pawn_index += 1
 
-    def check_all_options(self): # """Manny is here"""
+    def check_all_options(self):
         self.print_temp_debug_message("Entered check_all_options()")
 
         current_player_turn = self.current_player_turn
